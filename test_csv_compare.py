@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+import os
 from unittest.mock import patch
 from pathlib import Path
 
@@ -9,6 +10,7 @@ from comparison_history import (
     ComparisonHistory,
     comparison_from_entry,
     create_history_entry,
+    _default_history_path,
 )
 from csv_compare import (
     Comparison,
@@ -119,6 +121,50 @@ class CompareFilesTests(unittest.TestCase):
 
 
 class ComparisonHistoryTests(unittest.TestCase):
+    def test_history_path_includes_history_directory(self):
+        self.assertEqual(
+            _default_history_path(),
+            Path(__file__).resolve().parent
+            / "history"
+            / "comparison_history.json",
+        )
+
+    def test_frozen_history_paths_are_platform_specific(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with patch("comparison_history.sys.frozen", True, create=True):
+                with (
+                    patch("comparison_history.sys.platform", "win32"),
+                    patch.dict(os.environ, {"LOCALAPPDATA": str(root)}),
+                ):
+                    self.assertEqual(
+                        _default_history_path(),
+                        root / "csvviewer" / "history" / "comparison_history.json",
+                    )
+
+                with (
+                    patch("comparison_history.sys.platform", "darwin"),
+                    patch("comparison_history.Path.home", return_value=root),
+                ):
+                    self.assertEqual(
+                        _default_history_path(),
+                        root
+                        / "Library"
+                        / "Application Support"
+                        / "csvviewer"
+                        / "history"
+                        / "comparison_history.json",
+                    )
+
+                with (
+                    patch("comparison_history.sys.platform", "linux"),
+                    patch.dict(os.environ, {"XDG_DATA_HOME": str(root)}),
+                ):
+                    self.assertEqual(
+                        _default_history_path(),
+                        root / "csvviewer" / "history" / "comparison_history.json",
+                    )
+
     def test_create_read_update_delete_snapshot(self):
         comparison = Comparison(
             headers=["value"],
@@ -157,6 +203,38 @@ class ComparisonHistoryTests(unittest.TestCase):
             self.assertEqual(store.list_entries(), [])
             with self.assertRaises(KeyError):
                 store.get(created["id"])
+
+    def test_migrates_legacy_history_into_history_folder(self):
+        comparison = Comparison(
+            headers=["value"],
+            left_rows=[["1"]],
+            right_rows=[["1"]],
+            statuses=[[GREEN]],
+            counts={GREEN: 1, ORANGE: 0, RED: 0},
+            left_row_count=1,
+            right_row_count=1,
+        )
+        entry_data = create_history_entry(
+            "Legacy",
+            "left.csv",
+            "right.csv",
+            set(),
+            None,
+            0.001,
+            0.00001,
+            comparison,
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            legacy = root / ".csv_compare_history.json"
+            destination = root / "history" / "comparison_history.json"
+            ComparisonHistory(legacy).create(entry_data)
+
+            store = ComparisonHistory(destination, legacy)
+
+            self.assertFalse(legacy.exists())
+            self.assertTrue(destination.is_file())
+            self.assertEqual(store.list_entries()[0]["name"], "Legacy")
 
     def test_history_ui_create_load_refresh_update_delete(self):
         app = QApplication.instance() or QApplication([])

@@ -5,9 +5,13 @@ A desktop CSV comparison tool with a modular PySide6 interface.
 ## Run
 
 ```bash
-python3 -m pip install -r requirements.txt
-python3 csv_compare.py
+python -m pip install -e .
+csv-compare
 ```
+
+For development installs, `python -m pip install -e .` installs the project
+in editable mode, so source edits are picked up without reinstalling. You can
+also launch it as `python csv_compare.py`.
 
 GUI code lives under `ui/`, with reusable file-picker, comparison-settings,
 and results-table widgets in `ui/widgets/`.
@@ -29,8 +33,12 @@ entries, and reloading the history list from disk. The history bar's
 **Load Saved** button opens a file picker for a comparison CSV previously
 exported with **Save Output...**. Double-click a history dropdown entry to
 load its stored snapshot. Comparison exports include the source file paths, so
-loading one restores those paths in the File 1 and File 2 fields. History is stored in
-`.csv_compare_history.json` in the project folder. Save a comparison with
+loading one restores those paths in the File 1 and File 2 fields. In a source
+checkout, history is stored at `history/comparison_history.json`; packaged
+builds store it in the operating system's application-data directory under
+`csvviewer/history/comparison_history.json`. Any existing project-level
+`.csv_compare_history.json` is moved to the new history location the first time
+the updated app starts. Save a comparison with
 **Save New** before loading, refreshing, updating, or deleting it.
 **Refresh Sources** updates the current view; select **Update Saved** to
 persist the refreshed result and current settings to the selected history
@@ -52,3 +60,24 @@ in file order unless a sort column is specified.
 ```bash
 python3 -m unittest
 ```
+
+## Build binaries for Linux, Windows, and macOS
+
+The GitHub Actions workflow builds native standalone packages on Linux,
+Windows, macOS Intel, and Apple Silicon macOS. On each platform, the workflow
+tests the app, builds it with PyInstaller, and publishes a downloadable ZIP
+artifact. Run the workflow from the **Actions** tab, or push a commit to
+`main`; tagged releases starting with `v` also trigger builds.
+
+Each build must run on its target operating system. To build locally on Linux
+x86_64:
+
+```bash
+python3 -m pip install -r requirements-build.txt
+bash build_linux.sh
+```
+
+The script creates `dist/CSVCompare` and
+`dist/CSVCompare-Linux-x86_64.zip`. Each platform ZIP contains its standalone
+executable and this README. Extract the package and launch the executable
+(`CSVCompare.exe` on Windows, or `./CSVCompare` on macOS and Linux).

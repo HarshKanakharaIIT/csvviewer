@@ -1,5 +1,10 @@
 .csv_compare_history.json
+/history/
 __pycache__/
 *.py[cod]
 .venv/
 venv/
+*.egg-info/
+/build/
+/dist/
+*.spec

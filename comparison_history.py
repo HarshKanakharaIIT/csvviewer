@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import tempfile
 import uuid
 from datetime import datetime, timezone
@@ -10,8 +11,17 @@ from csv_compare import Comparison, GREEN, ORANGE, RED
 
 
 class ComparisonHistory:
-    def __init__(self, path: Path | None = None):
-        self.path = path or Path(__file__).resolve().parent / ".csv_compare_history.json"
+    def __init__(
+        self, path: Path | None = None, legacy_path: Path | None = None
+    ):
+        if path is None:
+            self.path = _default_history_path()
+            legacy_path = legacy_path or _legacy_history_path()
+        else:
+            self.path = Path(path)
+
+        if legacy_path is not None:
+            self._migrate_legacy_file(Path(legacy_path))
 
     def list_entries(self) -> list[dict[str, Any]]:
         return self._read_entries()
@@ -70,6 +80,18 @@ class ComparisonHistory:
         for entry in data["comparisons"]:
             _validate_entry(entry)
         return data["comparisons"]
+
+    def _migrate_legacy_file(self, legacy_path: Path) -> None:
+        if self.path.exists() or not legacy_path.is_file():
+            return
+        try:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            os.replace(legacy_path, self.path)
+        except OSError as error:
+            raise OSError(
+                f"Could not move saved comparison history from {legacy_path} "
+                f"to {self.path}: {error}"
+            ) from error
 
     def _write_entries(self, entries: list[dict[str, Any]]) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -201,3 +223,27 @@ def _validate_entry(entry: Any) -> None:
 
 def _timestamp() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _default_history_path() -> Path:
+    if getattr(sys, "frozen", False):
+        if sys.platform == "win32":
+            data_home = Path(
+                os.environ.get(
+                    "LOCALAPPDATA", Path.home() / "AppData" / "Local"
+                )
+            )
+        elif sys.platform == "darwin":
+            data_home = Path.home() / "Library" / "Application Support"
+        else:
+            data_home = Path(
+                os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share")
+            )
+        return data_home / "csvviewer" / "history" / "comparison_history.json"
+    return Path(__file__).resolve().parent / "history" / "comparison_history.json"
+
+
+def _legacy_history_path() -> Path | None:
+    if getattr(sys, "frozen", False):
+        return None
+    return Path(__file__).resolve().parent / ".csv_compare_history.json"
