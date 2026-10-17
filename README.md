@@ -86,3 +86,8 @@ file; make it executable if needed, then run
 system with a desktop environment and glibc. Windows and macOS ZIPs contain
 their standalone app, this README, and the SVG icon; extract and launch
 `CSVCompare.exe` on Windows or `./CSVCompare` on macOS.
+
+The SVG is also set as the Qt application/window icon and is bundled into the
+PyInstaller executable so it appears in the running app on supported desktops.
+Windows builds receive a native `.ico` executable icon, and macOS builds
+receive a native `.icns` app icon.

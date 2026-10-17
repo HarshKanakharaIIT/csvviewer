@@ -23,6 +23,7 @@ from csv_compare import (
     write_comparison_csv,
 )
 from ui.main_window import MainWindow
+from ui.app_icon import application_icon
 
 
 class CompareValuesTests(unittest.TestCase):
@@ -121,6 +122,17 @@ class CompareFilesTests(unittest.TestCase):
 
 
 class ComparisonHistoryTests(unittest.TestCase):
+    def test_application_icon_loads_for_app_and_window(self):
+        app = QApplication.instance() or QApplication([])
+        icon = application_icon()
+        self.assertFalse(icon.isNull())
+
+        window = MainWindow()
+        self.assertFalse(window.windowIcon().isNull())
+        app.setWindowIcon(icon)
+        self.assertFalse(app.windowIcon().isNull())
+        window.close()
+
     def test_history_path_includes_history_directory(self):
         self.assertEqual(
             _default_history_path(),

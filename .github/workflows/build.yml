@@ -48,17 +48,7 @@ jobs:
         run: python -m unittest -v
 
       - name: Build standalone executable
-        run: >-
-          python -m PyInstaller
-          --noconfirm
-          --clean
-          --onefile
-          --windowed
-          --name CSVCompare
-          --distpath dist
-          --workpath build/pyinstaller
-          --specpath build
-          csv_compare.py
+        run: python build_binary.py
 
       - name: Package executable and README
         run: python package_binary.py

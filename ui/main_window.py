@@ -31,6 +31,7 @@ from csv_compare import (
     read_csv,
     write_comparison_csv,
 )
+from ui.app_icon import application_icon
 from ui.widgets import (
     ComparisonSettingsWidget,
     CsvFilePicker,
@@ -43,6 +44,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("CSV Comparison")
+        self.setWindowIcon(application_icon())
         self.resize(1100, 700)
 
         self.file1_picker = CsvFilePicker("File 1:")
@@ -353,6 +355,7 @@ def _summary(result: Comparison) -> str:
 
 def main() -> None:
     app = QApplication(sys.argv)
+    app.setWindowIcon(application_icon())
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

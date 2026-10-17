@@ -9,15 +9,6 @@ if [[ "$(uname -s)" != "Linux" || "$(uname -m)" != "x86_64" ]]; then
     exit 1
 fi
 
-python3 -m PyInstaller \
-    --noconfirm \
-    --clean \
-    --onefile \
-    --windowed \
-    --name CSVCompare \
-    --distpath dist \
-    --workpath build/pyinstaller \
-    --specpath build \
-    csv_compare.py
+python3 build_binary.py
 
 python3 package_binary.py
