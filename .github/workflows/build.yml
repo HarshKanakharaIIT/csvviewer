@@ -74,5 +74,6 @@ jobs:
           path: |
             dist/CSVCompare-*.zip
             dist/CSVCompare-*.AppImage
+            dist/csvviewer.svg
           if-no-files-found: error
           retention-days: 30

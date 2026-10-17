@@ -59,6 +59,9 @@ def main() -> None:
             binary_info.compress_type = zipfile.ZIP_DEFLATED
             package.writestr(binary_info, binary.read_bytes())
             package.write("README.md", "README.md")
+            icon = Path("assets/csvviewer.svg")
+            if icon.is_file():
+                package.write(icon, icon.name)
         os.replace(temporary_path, archive)
     except Exception:
         if temporary_path is not None:

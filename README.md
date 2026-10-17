@@ -79,8 +79,10 @@ bash build_appimage.sh
 ```
 
 The scripts create `dist/CSVCompare-Linux-x86_64.zip` and
-`dist/CSVCompare-Linux-x86_64.AppImage`. The AppImage is a single executable
-file; make it executable if needed, then run `./CSVCompare-Linux-x86_64.AppImage`.
-It requires a compatible x86_64 Linux system with a desktop environment and
-glibc. Windows and macOS ZIPs contain their standalone app and this README;
-extract and launch `CSVCompare.exe` on Windows or `./CSVCompare` on macOS.
+`dist/CSVCompare-Linux-x86_64.AppImage`, and copies the standalone icon to
+`dist/csvviewer.svg`. The AppImage embeds that icon and is a single executable
+file; make it executable if needed, then run
+`./CSVCompare-Linux-x86_64.AppImage`. It requires a compatible x86_64 Linux
+system with a desktop environment and glibc. Windows and macOS ZIPs contain
+their standalone app, this README, and the SVG icon; extract and launch
+`CSVCompare.exe` on Windows or `./CSVCompare` on macOS.
