@@ -1,0 +1,5 @@
+.csv_compare_history.json
+__pycache__/
+*.py[cod]
+.venv/
+venv/
