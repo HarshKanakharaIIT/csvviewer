@@ -63,21 +63,24 @@ python3 -m unittest
 
 ## Build binaries for Linux, Windows, and macOS
 
-The GitHub Actions workflow builds native standalone packages on Linux,
-Windows, macOS Intel, and Apple Silicon macOS. On each platform, the workflow
-tests the app, builds it with PyInstaller, and publishes a downloadable ZIP
-artifact. Run the workflow from the **Actions** tab, or push a commit to
-`main`; tagged releases starting with `v` also trigger builds.
+The GitHub Actions workflow builds native packages on Linux, Windows, macOS
+Intel, and Apple Silicon macOS. Linux gets an AppImage and ZIP; Windows and
+macOS get platform-specific ZIP artifacts. Run the workflow from the
+**Actions** tab, or push a commit to `main`; tagged releases starting with
+`v` also trigger builds.
 
-Each build must run on its target operating system. To build locally on Linux
-x86_64:
+Each build runs on its target operating system. On Linux x86_64, install the
+build requirements and create both packages with:
 
 ```bash
 python3 -m pip install -r requirements-build.txt
 bash build_linux.sh
+bash build_appimage.sh
 ```
 
-The script creates `dist/CSVCompare` and
-`dist/CSVCompare-Linux-x86_64.zip`. Each platform ZIP contains its standalone
-executable and this README. Extract the package and launch the executable
-(`CSVCompare.exe` on Windows, or `./CSVCompare` on macOS and Linux).
+The scripts create `dist/CSVCompare-Linux-x86_64.zip` and
+`dist/CSVCompare-Linux-x86_64.AppImage`. The AppImage is a single executable
+file; make it executable if needed, then run `./CSVCompare-Linux-x86_64.AppImage`.
+It requires a compatible x86_64 Linux system with a desktop environment and
+glibc. Windows and macOS ZIPs contain their standalone app and this README;
+extract and launch `CSVCompare.exe` on Windows or `./CSVCompare` on macOS.
