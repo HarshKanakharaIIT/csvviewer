@@ -37,7 +37,8 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install --yes libgl1-mesa-dev libegl1-mesa libxcb-cursor0
+          apt-cache policy libegl1 libgl1 libxcb-cursor0
+          sudo apt-get install --yes libegl1 libgl1 libxcb-cursor0
 
       - name: Install application and build dependencies
         run: python -m pip install -e ".[build]"
