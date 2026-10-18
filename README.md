@@ -76,16 +76,20 @@ build requirements and create both packages with:
 python3 -m pip install -r requirements-build.txt
 bash build_linux.sh
 bash build_appimage.sh
+bash build_deb.sh
 ```
 
-The scripts create `dist/CSVCompare-Linux-x86_64.zip` and
-`dist/CSVCompare-Linux-x86_64.AppImage`, and copies the standalone icon to
+The scripts create `dist/CSVCompare-Linux-x86_64.zip`,
+`dist/CSVCompare-Linux-x86_64.AppImage`, and
+`dist/CSVCompare-Linux-amd64.deb`, and copy the standalone icon to
 `dist/csvviewer.svg`. The AppImage embeds that icon and is a single executable
 file; make it executable if needed, then run
-`./CSVCompare-Linux-x86_64.AppImage`. It requires a compatible x86_64 Linux
-system with a desktop environment and glibc. Windows and macOS ZIPs contain
-their standalone app, this README, and the SVG icon; extract and launch
-`CSVCompare.exe` on Windows or `./CSVCompare` on macOS.
+`./CSVCompare-Linux-x86_64.AppImage`. To install the Debian package, run
+`sudo apt install ./CSVCompare-Linux-amd64.deb`; launch CSV Compare from the
+desktop application menu. The `.deb` targets Debian/Ubuntu-family x86_64
+systems. Windows and macOS ZIPs contain their standalone app, this README, and
+the SVG icon; extract and launch `CSVCompare.exe` on Windows or `./CSVCompare`
+on macOS.
 
 The SVG is also set as the Qt application/window icon and is bundled into the
 PyInstaller executable so it appears in the running app on supported desktops.

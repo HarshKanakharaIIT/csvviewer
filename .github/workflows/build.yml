@@ -57,6 +57,10 @@ jobs:
         if: runner.os == 'Linux'
         run: bash build_appimage.sh
 
+      - name: Build Debian package
+        if: runner.os == 'Linux'
+        run: bash build_deb.sh
+
       - name: Upload platform package
         uses: actions/upload-artifact@v4
         with:
@@ -64,6 +68,7 @@ jobs:
           path: |
             dist/CSVCompare-*.zip
             dist/CSVCompare-*.AppImage
+            dist/CSVCompare-*.deb
             dist/csvviewer.svg
           if-no-files-found: error
           retention-days: 30
